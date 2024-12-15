@@ -2,16 +2,24 @@ pipeline {
     agent any
 
     stages {
-        stage('build') {
-            steps {
-                sh 'docker build -t saipriya129/cartservice:v1 .'
-            }
-        }
-        stage("push") {
+        stage('Build & Tag Docker Image') {
             steps {
                 script {
-                    withDockerRegistry(credentialsId: 'docker-cred') {
-                      sh 'docker push saipriya129/cartservice:v1'
+                    dir('src') {
+
+                    withDockerRegistry(credentialsId: 'docker-cred', toolName: 'docker') {
+                        sh "docker build -t saipriya129/cartservice:v1 ."
+                    }
+                        }
+                }
+            }
+        }
+        
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker-cred', toolName: 'docker') {
+                        sh "docker push saipriya129/cartservice:v1 "
                     }
                 }
             }
